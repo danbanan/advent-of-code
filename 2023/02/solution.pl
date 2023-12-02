@@ -3,8 +3,7 @@ use v5.16;
 use strict;
 use warnings;
 
-use Data::Dumper;
-use List::Util qw/first/;
+use List::Util qw/first product/;
 
 sub part1 {
   my %color_limit = (red => 12, green => 13, blue => 14);
@@ -26,6 +25,30 @@ sub part1 {
   return $sum;
 }
 
+sub part2 {
+  my %color_limit = (red => 12, green => 13, blue => 14);
+
+  my $sum;
+
+  while (<>) {
+    my ($games_str) = m/\w+ \d+: (.*)/g;
+
+    my @game = map { [ split ', ', $_ ] } split ';', $games_str;
+
+    my %max_count = (red => 0, green => 0, blue => 0);
+
+    for my $round (@game) {
+      my @pairs = map { [ split ' ', $_ ] } @{$round};
+      for my $pair (@pairs) {
+        my ($count, $color) = @$pair;
+        $max_count{$color} = $count if $count > $max_count{$color};
+      }
+    }
+    $sum += product values %max_count;
+  }
+
+  return $sum;
+}
+
 say part1();
-
-
+say part2();
