@@ -3,7 +3,6 @@ use v5.16;
 use warnings;
 use strict;
 
-use Data::Dumper;
 use List::MoreUtils qw/duplicates reduce_0/;
 
 sub part1 {
@@ -21,18 +20,18 @@ sub part1 {
 sub part2 {
     my %card_scores;
     my @copies;
-    my @cards;
 
     while (<>) {
 	my @numbers = m/(\d+)/g;
-	my @winning_numbers = duplicates @numbers[1..$#numbers];
-	$card_scores{$.} = scalar @winning_numbers;
-	push @copies, (($. + 1)..($. + $card_scores{$.}));
+	my $winning_numbers = scalar duplicates @numbers[1..$#numbers];
+	$card_scores{$.} = [ (($. + 1)..($. + $winning_numbers)) ];
+	push @copies, @{ $card_scores{$.} };
     }
 
-    print Dumper \%card_scores;
+    push @copies, @{ $card_scores{$_} } foreach (@copies);
 
-    return $. + scalar @copies + reduce_0 { $a + $card_scores{$b} } @copies;
+    return scalar @copies + $.;
 }
 
+say part1();
 say part2();
